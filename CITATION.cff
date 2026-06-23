@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: "SEO + GEO Standard"
+message: "If you use this standard, please cite it using these metadata."
+type: software
+abstract: >-
+  A framework-agnostic standard for Search Engine Optimization (SEO) and
+  Generative Engine Optimization (GEO) that an AI coding agent can follow to
+  audit, implement, and verify SEO/GEO on any stack. Each rule states a WHAT
+  and a THRESHOLD; the agent decides the HOW. Synthesized from a static audit
+  of three production codebases.
+version: "1.0.0"
+date-released: "2026-06-23"
+license: MIT
+repository-code: "https://github.com/ar443/seo-geo-standard"
+url: "https://github.com/ar443/seo-geo-standard"
+authors:
+  - given-names: Tanvir
+    family-names: Chatha
+keywords:
+  - seo
+  - geo
+  - generative-engine-optimization
+  - answer-engine-optimization
+  - ai-agents
+  - structured-data
+  - json-ld
+  - core-web-vitals
+  - standard
+  - specification
