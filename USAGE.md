@@ -24,7 +24,7 @@ That's the whole idea: **one link → consistent, verifiable SEO + GEO rules for
 
 ---
 
-## Scenario 1 — Paste the link (web agents, no repo access)
+## Web agents — paste the link (no repo access)
 
 Best for ChatGPT, Claude.ai, Perplexity, or any chat agent that can browse. It reads the
 public rules and applies them to whatever you describe.
@@ -40,51 +40,206 @@ and (2) a prioritized P0→P2 fix plan. Do not give generic advice — cite rule
 
 ---
 
-## Scenario 2 — Start of a project (greenfield, agent works in your repo)
+## Coding agents — two flavors
 
-Best for Claude Code, Cursor, or Copilot on a new codebase. The rules become the default
-guardrails as the agent scaffolds pages, metadata, and schema.
+For agents that work inside your repo (Claude Code, Cursor, Copilot), each scenario below
+comes in two flavors:
+
+- **Plain** — the agent reads the standard from the URL on that run.
+- **Self-installing** — the agent fetches the standard once, saves it locally, and writes its
+  own always-on rule file *before* building. After the first run the rules apply automatically
+  to every future edit, with no reminder.
+
+Each flavor has a **General** version (any agent) and a **Cursor** version (Agent/Composer mode).
+The stack is shown as `[Next.js 15 App Router, TypeScript, Tailwind]` — swap it for yours.
+
+> Cursor tip: `@Web` fetching isn't always enabled. Every Cursor prompt has a built-in
+> fallback ("if you can't fetch it, I'll paste it"), and the self-installing ones save the
+> standard into the repo so the rest of the work never depends on a live fetch.
+
+---
+
+## Scenario A — Start of a project (empty folder / greenfield)
+
+### Plain — General
 
 ```text
-We follow the SEO + GEO Standard:
+You're setting up a brand-new project in this empty folder.
+Stack: [Next.js 15 App Router, TypeScript, Tailwind].
+
+Before writing any code, fetch and read the SEO + GEO Standard:
 https://raw.githubusercontent.com/ar443/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md
 
-Fetch and read it first. Treat its rules (§1–§10) as guardrails for everything you build
-in this repo. As you scaffold pages, metadata, canonical URLs, and JSON-LD, conform to the
-standard by default — one source of truth, server-rendered SEO, schema per page type.
-Before finishing any task, self-check against §8 (verification gate).
+Treat every rule (§1–§10) as a hard requirement. Then:
+1. Ask me for the site name and domain.
+2. Scaffold the project for the stack above.
+3. Build the SEO foundation to the standard from the start: one central SEO config +
+   composer (§1), server-rendered title/meta/canonical/OG/Twitter (§2), JSON-LD per
+   page type (§3), and sitemap.xml + robots.txt that agree and allow AI crawlers (§4).
+4. Add a home page and one content page that follow §6 GEO (answer-first 40–60 word
+   intro, question-shaped headings).
+5. Self-check against §8 and show me the evidence.
+```
+
+### Plain — Cursor
+
+```text
+[Cursor Agent] New project in this empty folder.
+Stack: [Next.js 15 App Router, TypeScript, Tailwind].
+
+1. Fetch the SEO + GEO Standard with @Web and save it to docs/SEO-GEO-STANDARD.md:
+   https://raw.githubusercontent.com/ar443/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md
+   (If you can't fetch it, tell me and I'll paste the contents.)
+2. Create .cursor/rules/seo-geo.mdc that tells every future edit to follow
+   docs/SEO-GEO-STANDARD.md.
+3. Ask me for site name + domain, then scaffold the project.
+4. Build the SEO foundation to the standard from the start — central SEO config +
+   composer (§1), server-rendered meta/canonical/OG/Twitter (§2), JSON-LD per page
+   type (§3), sitemap + robots that agree and allow AI crawlers (§4), plus a home +
+   one content page following §6 (answer-first, question-shaped).
+5. Run the §8 checks you can run locally and show evidence.
+```
+
+### Self-installing — General
+
+```text
+You're starting a new project in this empty folder.
+Stack: [Next.js 15 App Router, TypeScript, Tailwind].
+
+STEP 0 — Install the guardrail yourself, before anything else:
+1. Fetch the SEO + GEO Standard and save the full text to docs/SEO-GEO-STANDARD.md:
+   https://raw.githubusercontent.com/ar443/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md
+   (If you can't fetch it, tell me and I'll paste it.)
+2. Create the persistent agent-rules file your environment uses — CLAUDE.md (Claude Code),
+   AGENTS.md (generic), or .github/copilot-instructions.md (Copilot) — with a rule that says:
+   "All web / page / metadata / schema work MUST follow docs/SEO-GEO-STANDARD.md (§1–§10);
+   self-check §8 before marking anything done."
+
+THEN build:
+3. Ask me for site name + domain, scaffold the stack, and build the SEO foundation to the
+   standard from the start — central config + composer (§1), server-rendered meta/canonical/
+   OG/Twitter (§2), JSON-LD per page type (§3), sitemap + robots that agree and allow AI
+   crawlers (§4), plus a home + one content page following §6 (answer-first, question-shaped).
+4. Self-check against §8 and show evidence.
+
+Treat the rules file you just created as binding for every future edit.
+```
+
+### Self-installing — Cursor
+
+```text
+[Cursor Agent] New project in this empty folder.
+Stack: [Next.js 15 App Router, TypeScript, Tailwind].
+
+STEP 0 — Set up your own guardrail first:
+1. Fetch with @Web and save to docs/SEO-GEO-STANDARD.md:
+   https://raw.githubusercontent.com/ar443/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md
+   (Can't fetch? Tell me, I'll paste it.)
+2. Create .cursor/rules/seo-geo.mdc containing exactly:
+   ---
+   description: SEO + GEO standard — all web/page/metadata/schema work
+   alwaysApply: true
+   ---
+   Follow docs/SEO-GEO-STANDARD.md (§1–§10) for every page, metadata, schema, sitemap, and
+   content change. Server-render all SEO tags; one source of truth; JSON-LD per page type;
+   sitemap↔robots agree + allow AI crawlers; §6 GEO answer-first + question-shaped.
+   Never client-JS-only SEO, duplicate schema, or fake ratings. Self-check §8 before done.
+
+THEN build:
+3. Ask me for site name + domain, scaffold, and build the SEO foundation to the standard
+   (§1 config+composer, §2 meta/canonical/OG, §3 JSON-LD, §4 sitemap+robots, §6 home +
+   content page).
+4. Run the §8 checks locally and show evidence.
 ```
 
 ---
 
-## Scenario 3 — Mid-project (audit and fix an existing codebase)
+## Scenario B — Mid-project (existing codebase)
 
-Best when the project already exists and you want it brought up to standard. This runs the
-standard's own six-phase operating procedure (§0).
+### Plain — General
 
 ```text
 Fetch and read the SEO + GEO Standard:
 https://raw.githubusercontent.com/ar443/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md
 
-Follow its §0 operating procedure on THIS codebase:
-1. Discover — detect the stack and where head/metadata, routing, sitemap, robots, schema live.
-2. Audit — score §1–§7; produce a gap list (rule ID → pass / partial / fail).
+Run its §0 operating procedure on THIS existing codebase:
+1. Discover — detect the stack and where head/metadata, routing, sitemap, robots,
+   and schema live.
+2. Audit — score §1–§7 into a gap list (rule ID → pass / partial / fail) plus a
+   per-page-type coverage table.
 3. Prioritize — P0 technical → P1 on-page + schema + content → P2 GEO depth.
-4. Implement — fix using our existing patterns; never duplicate tags or schema.
-5. Verify — run the §8 gate; show evidence.
-6. Report — what changed, what's manual/off-site, what needs a live run.
+Show me the audit and gap list BEFORE changing anything.
 
-Do not claim done until the verification gate passes with evidence.
+After I approve:
+4. Implement P0 + P1 using our existing patterns — one source of truth, never
+   duplicate tags or schema.
+5. Verify against §8 and show evidence.
+6. Report what changed and what still needs a live run or off-site work.
+```
+
+### Plain — Cursor
+
+```text
+[Cursor Agent] Fetch the SEO + GEO Standard with @Web (or I'll paste it):
+https://raw.githubusercontent.com/ar443/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md
+
+Run its §0 procedure on THIS repo:
+1. Discover — scan for where metadata, routing, sitemap, robots, and schema live.
+2. Audit — gap list (rule ID → pass/partial/fail) + a per-page-type table.
+3. Prioritize — P0 technical → P1 on-page + schema + content → P2 GEO.
+Pause here and show me the audit before editing anything.
+
+After I approve:
+4. Implement P0 + P1 with our existing patterns (one source of truth, no duplicate schema).
+5. Verify against §8 — show that server HTML has the tags and there's no duplicate JSON-LD.
+6. Report what changed + what needs a live run.
+```
+
+### Self-installing — General
+
+```text
+STEP 0 — Install the guardrail before touching code:
+1. Fetch and save the full standard to docs/SEO-GEO-STANDARD.md:
+   https://raw.githubusercontent.com/ar443/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md
+   (If you can't fetch it, I'll paste it.)
+2. Create the persistent rules file your environment uses — CLAUDE.md / AGENTS.md /
+   .github/copilot-instructions.md — pointing all future web/metadata/schema work at
+   docs/SEO-GEO-STANDARD.md, with "self-check §8 before done."
+
+THEN run the §0 procedure on THIS codebase:
+3. Discover the stack + where metadata/routing/sitemap/robots/schema live.
+4. Audit §1–§7 → a gap list (rule ID → pass / partial / fail) + a per-page-type table.
+   Show me this before editing anything.
+After I approve:
+5. Implement P0 + P1 with our existing patterns (one source of truth, no duplicate schema).
+6. Verify §8 with evidence; report what changed + what needs a live run.
+```
+
+### Self-installing — Cursor
+
+```text
+[Cursor Agent] STEP 0 — Set up your guardrail first:
+1. Fetch with @Web, save to docs/SEO-GEO-STANDARD.md:
+   https://raw.githubusercontent.com/ar443/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md
+   (Can't fetch? I'll paste it.)
+2. Create .cursor/rules/seo-geo.mdc (alwaysApply: true) that points every future edit at
+   docs/SEO-GEO-STANDARD.md — server-rendered SEO, one source of truth, JSON-LD per page
+   type, sitemap↔robots agree + allow AI crawlers, §6 GEO; never client-JS-only / duplicate /
+   fake ratings; self-check §8 before done.
+
+THEN run §0 on THIS repo:
+3. Discover → 4. Audit (gap list + per-page-type table). Pause and show me before editing.
+After approval:
+5. Implement P0 + P1 (existing patterns, no duplicate schema).
+6. Verify §8 with evidence + report.
 ```
 
 ---
 
-## Scenario 4 — Permanent guardrail (every build and fix stays in-bounds)
+## Permanent guardrail (add it by hand)
 
-This is the "boundaries" setup: put a short rule in your agent's always-on config so **every**
-future task automatically respects the standard, without re-pasting a prompt.
-
-Add this to your project's agent-rules file — `CLAUDE.md` (Claude Code), `.cursorrules`
+The self-installing prompts above create this for you. To set it up manually instead, drop
+this into your agent's always-on config — `CLAUDE.md` (Claude Code), `.cursor/rules/seo-geo.mdc`
 (Cursor), or `.github/copilot-instructions.md` (Copilot):
 
 ```text
@@ -99,8 +254,7 @@ Self-check against §8 (verification gate) before marking any SEO-touching work 
 
 **Claude Code users — even simpler:** install the packaged skill so it auto-invokes on any
 SEO/GEO task. Copy [`adapters/claude-code/SKILL.md`](adapters/claude-code/SKILL.md) to
-`<your-project>/.claude/skills/seo-geo/SKILL.md`. From then on the agent applies the rules
-automatically whenever it touches metadata, schema, sitemaps, or content.
+`<your-project>/.claude/skills/seo-geo/SKILL.md`.
 
 ---
 
@@ -140,18 +294,3 @@ curl -sL https://your-site.com/ | grep -E '<title>|name="description"|rel="canon
 
 Plus: [Rich Results Test](https://search.google.com/test/rich-results) passes per page type,
 Lighthouse SEO ≥ 95, and sitemap ↔ robots agree.
-
----
-
-## Suggested how-to video walkthrough
-
-A clean 3–4 minute structure for a team video:
-
-1. **The problem (20s)** — "improve my SEO" gives inconsistent, unverified results.
-2. **The idea (20s)** — one public link = a fixed rulebook any agent obeys. Show the repo.
-3. **Demo A — mid-project (90s)** — paste the Scenario 3 prompt into Claude Code/Cursor on a
-   real repo; show the audit gap list and a couple of fixes landing.
-4. **Demo B — guardrail (40s)** — paste the Scenario 4 block into `CLAUDE.md`; ask for a new
-   page; show it comes out standard-compliant with no extra prompting.
-5. **Proof (30s)** — run the `curl` check and Rich Results Test; show green.
-6. **Close (10s)** — the link again; "paste it, and every agent stays in-bounds."
