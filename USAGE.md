@@ -5,9 +5,9 @@ You don't install anything. You point an agent at the rules — by pasting a lin
 the file in your repo — and from then on the agent audits, builds, and fixes SEO + GEO
 *within those boundaries*, on any stack.
 
-- **Public link:** <https://github.com/greelogix/seo-geo-standard>
-- **The rules (one file):** <https://github.com/greelogix/seo-geo-standard/blob/main/standard/SEO-GEO-STANDARD.md>
-- **Raw (for agents that fetch URLs):** <https://raw.githubusercontent.com/greelogix/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md>
+- **Public link:** <https://github.com/ar443/seo-geo-standard>
+- **The rules (one file):** <https://github.com/ar443/seo-geo-standard/blob/main/standard/SEO-GEO-STANDARD.md>
+- **Raw (for agents that fetch URLs):** <https://raw.githubusercontent.com/ar443/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md>
 
 Use it **at the start of a project**, **mid-project**, or as a **permanent guardrail** the
 agent checks every time it builds or fixes something. Pick your scenario below and copy the prompt.
@@ -31,7 +31,7 @@ public rules and applies them to whatever you describe.
 
 ```text
 Read the SEO + GEO Standard here:
-https://github.com/greelogix/seo-geo-standard/blob/main/standard/SEO-GEO-STANDARD.md
+https://github.com/ar443/seo-geo-standard/blob/main/standard/SEO-GEO-STANDARD.md
 
 Adopt every rule (§1–§10) as hard requirements. Then ask me for my site URL and
 framework, and produce: (1) an audit with a pass / partial / fail verdict per rule,
@@ -47,7 +47,7 @@ guardrails as the agent scaffolds pages, metadata, and schema.
 
 ```text
 We follow the SEO + GEO Standard:
-https://raw.githubusercontent.com/greelogix/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md
+https://raw.githubusercontent.com/ar443/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md
 
 Fetch and read it first. Treat its rules (§1–§10) as guardrails for everything you build
 in this repo. As you scaffold pages, metadata, canonical URLs, and JSON-LD, conform to the
@@ -64,7 +64,7 @@ standard's own six-phase operating procedure (§0).
 
 ```text
 Fetch and read the SEO + GEO Standard:
-https://raw.githubusercontent.com/greelogix/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md
+https://raw.githubusercontent.com/ar443/seo-geo-standard/main/standard/SEO-GEO-STANDARD.md
 
 Follow its §0 operating procedure on THIS codebase:
 1. Discover — detect the stack and where head/metadata, routing, sitemap, robots, schema live.
@@ -89,7 +89,7 @@ Add this to your project's agent-rules file — `CLAUDE.md` (Claude Code), `.cur
 
 ```text
 ## SEO / GEO rules
-Follow the SEO + GEO Standard: https://github.com/greelogix/seo-geo-standard
+Follow the SEO + GEO Standard: https://github.com/ar443/seo-geo-standard
 Any new page or fix MUST conform to: §1 one source of truth + server-rendered SEO,
 §2 on-page (title/meta/canonical/one H1/OG/Twitter/alt), §3 JSON-LD per page type,
 §4 sitemap↔robots agreement + AI-crawler allow rules, §6 GEO (answer-first, question-shaped).
