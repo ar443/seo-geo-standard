@@ -15,7 +15,7 @@
 > 1. **SEO-critical output** (title, meta, canonical, OG/Twitter, JSON-LD) should be in the **first HTML response from the server** — many AI crawlers and snapshot tools may not execute JavaScript reliably.
 > 2. **GEO is not a wholly separate channel.** Google AI Overviews and much of AI search appear to draw on the **same index** as Search, so a strong SEO foundation is largely your GEO foundation too. Skip the `llms.txt` fads.
 
-➡️ **[Jump to Quick start](#quick-start)** · 📜 **[Read the standard](standard/SEO-GEO-STANDARD.md)** · 🔍 **[See a sample audit](examples/audit-output.md)**
+➡️ **[How to use it (copy-paste prompts)](USAGE.md)** · 🚀 **[Quick start](#quick-start)** · 📜 **[Read the standard](standard/SEO-GEO-STANDARD.md)** · 🔍 **[Sample audit](examples/audit-output.md)**
 
 ---
 
@@ -126,6 +126,7 @@ seo-geo-standard/
 ├── examples/
 │   └── audit-output.md          # what an agent's audit + fix plan looks like
 ├── README.md
+├── USAGE.md                     # how any AI agent adopts the rules (copy-paste prompts)
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── CITATION.cff
