@@ -120,3 +120,28 @@ Each project scored **0–100**: SEO (60 pts) + GEO (40 pts).
 6. **Verify, don't assume.** Both leaders pair the work with tests + a launch checklist + Rich Results validation. The standard makes verification a gate.
 
 The synthesized result lives in **[`standard/SEO-GEO-STANDARD.md`](../standard/SEO-GEO-STANDARD.md)**.
+
+---
+
+## 7. Addendum — fourth-project validation (standard v1.1.0)
+
+After v1.0.0 shipped, a fourth production codebase — a **Next.js 16 (App Router)** agency site —
+was audited *against* the standard (overall ~72% on first pass). It surfaced no gaps in the existing
+rules, but its central SEO service (`lib/seo.js`) demonstrated five practices worth promoting from
+"good implementation detail" to explicit, framework-agnostic rules. These became **v1.1.0**:
+
+1. **Environment-derived origin (§1.2, rule 2.14).** The site resolved its origin from an env var
+   with a preview-deploy fallback, so canonical/OG/JSON-LD URLs work on preview and staging — not
+   just production. Hardcoding the prod origin 404s OG images on social previews.
+2. **`LocalBusiness` / `ProfessionalService` schema (§3.2).** The v1.0 matrix was SaaS/product-shaped
+   and omitted the schema type agencies and local/service businesses need.
+3. **Node identity & `@graph` linking (rule 3.4).** The codebase gave each node a stable `@id`
+   (`#organization`, `#website`) and linked shared entities by `@id` in one `@graph` — the concrete
+   technique behind §1.1's "one source per type".
+4. **Serialization hygiene (rule 3.5).** A shared `cleanJsonLd()` stripped `undefined`/empty keys
+   before stringifying, keeping JSON-LD valid.
+5. **Canonical path-form normalization (rule 2.3).** A single trailing-slash + lowercase policy,
+   matched by internal links and the sitemap.
+
+That `lib/seo.js` was also genericized into the **[Next.js adapter](../adapters/nextjs/)** — a
+reference implementation of the §1 architecture for the App Router.

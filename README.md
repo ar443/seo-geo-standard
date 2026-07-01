@@ -2,7 +2,7 @@
 
 **Hand one file to any AI coding agent and it will audit, implement, and verify real SEO + GEO — server-rendered, schema-backed, and gated on evidence — on any stack.**
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Framework-agnostic](https://img.shields.io/badge/stack-framework--agnostic-orange.svg)](standard/SEO-GEO-STANDARD.md)
 [![Works with](https://img.shields.io/badge/agents-Claude%20%C2%B7%20Cursor%20%C2%B7%20Copilot%20%C2%B7%20ChatGPT-8A2BE2.svg)](#quick-start)
@@ -116,10 +116,13 @@ seo-geo-standard/
 ├── standard/
 │   └── SEO-GEO-STANDARD.md      # THE spec — the canonical, citable standard
 ├── adapters/
-│   └── claude-code/
-│       └── SKILL.md             # Claude Code skill (drop into .claude/skills/seo-geo/)
+│   ├── claude-code/
+│   │   └── SKILL.md             # Claude Code skill (drop into .claude/skills/seo-geo/)
+│   └── nextjs/
+│       ├── seo.js               # Next.js App Router reference implementation (§1 architecture)
+│       └── README.md            # how to wire it up + rule-coverage map
 ├── reference/
-│   └── SEO-GEO-REPORT.md        # how the standard was derived (3-codebase audit)
+│   └── SEO-GEO-REPORT.md        # how the standard was derived (3-codebase audit + addendum)
 ├── examples/
 │   └── audit-output.md          # what an agent's audit + fix plan looks like
 ├── README.md
@@ -166,7 +169,13 @@ When handed the standard, an agent follows six phases, in order:
 | **GitHub Copilot** | ➡️ Use the standard directly | [Quick start](#generic-ai-agent-chatgpt-copilot-your-own) |
 | **ChatGPT / generic** | ➡️ Use the standard directly | [Quick start](#generic-ai-agent-chatgpt-copilot-your-own) |
 
-Want a packaged adapter for another agent? See [CONTRIBUTING.md](CONTRIBUTING.md) — adapters are the most welcome contribution.
+**Stack reference implementations** (the *how* for a specific framework — copy into your project):
+
+| Stack | Status | Where |
+|---|---|---|
+| **Next.js (App Router)** | ✅ Reference `seo.js` | [`adapters/nextjs/`](adapters/nextjs/) |
+
+Want a packaged adapter for another agent or stack? See [CONTRIBUTING.md](CONTRIBUTING.md) — adapters are the most welcome contribution.
 
 ## What an audit looks like
 
@@ -200,7 +209,7 @@ Rule-change proposals, new adapters, errata, and examples are all welcome. Pleas
 
 ## Versioning
 
-The standard follows [Semantic Versioning](https://semver.org/). Changes are recorded in [CHANGELOG.md](CHANGELOG.md). The current version is **1.0.0**.
+The standard follows [Semantic Versioning](https://semver.org/). Changes are recorded in [CHANGELOG.md](CHANGELOG.md). The current version is **1.1.0**.
 
 ## License
 

@@ -19,7 +19,7 @@ You implement and verify SEO + GEO to a fixed standard. This skill is **framewor
 6. **Report** — what changed, what's manual/off-site, what needs a live run (CWV, Search Console, backlinks).
 
 ## Architecture (MUST)
-- Single central SEO **config** (site_name, site_url, default og_image + description, twitter handle, organization_description, same_as social URLs, sitemap_lastmod, application_category).
+- Single central SEO **config** (site_name, site_url, default og_image + description, twitter handle, organization_description, same_as social URLs, sitemap_lastmod, application_category). Derive `site_url`/origin from an **env var** (with a prod fallback) so canonical/OG/JSON-LD URLs resolve in preview/staging/prod — never hardcode prod.
 - Single **service/composer** produces per page: title, description, canonical, og, twitter, robots directive, jsonLd[].
 - Single **render point** emits it all server-side. Pages call the service; they never hand-build tags.
 
@@ -38,6 +38,7 @@ You implement and verify SEO + GEO to a fixed standard. This skill is **framewor
 | Schema | Apply to |
 |---|---|
 | `Organization` (+logo, sameAs), `WebSite` | every public page (global) |
+| `LocalBusiness`/`ProfessionalService` (+address, areaServed) | agencies / local / service businesses (global; address on contact pages) |
 | `SoftwareApplication`/`WebApplication` | tool/app/home/landing (set applicationCategory, offers if free) |
 | `BreadcrumbList` | every page below top level |
 | `FAQPage` | pages with a Q&A block |
@@ -45,7 +46,7 @@ You implement and verify SEO + GEO to a fixed standard. This skill is **framewor
 | `Article`/`BlogPosting` | blog posts (datePublished, dateModified, author) |
 | `Product` (+AggregateRating only if real) | product/template pages |
 
-Validate every page with Google Rich Results Test. Never emit fake ratings.
+Give related nodes a stable `@id` and link shared entities by `{ "@id": … }` in a single `@graph` (don't repeat `Organization`/`WebSite` per block). Strip `undefined`/empty keys before stringifying — output must be valid JSON. Validate every page with Google Rich Results Test. Never emit fake ratings.
 
 ## Technical / crawlability (MUST)
 - `sitemap.xml` generated from canonical URLs, valid ISO-8601 `<lastmod>`, auto-includes new content.
@@ -79,4 +80,4 @@ One page per intent (no cannibalization); programmatic pages ≥300 words unique
 - [ ] Rich Results Test passes per page type; OG renders in debuggers; Lighthouse SEO ≥95 + CWV in range; Search Console + Bing verified, sitemap submitted.
 
 ## Never
-SEO via client-JS only · duplicate/conflicting schema or canonical · sitemap listing disallowed URLs · same title/meta across pages · fake ratings · blocking AI crawlers by default · chasing llms.txt before the foundation exists.
+SEO via client-JS only · duplicate/conflicting schema or canonical · repeating the same entity per block instead of linking by `@id` · hardcoding the prod origin so previews emit dead/404 URLs · serializing JSON-LD with undefined/placeholder values · sitemap listing disallowed URLs · same title/meta across pages · fake ratings · blocking AI crawlers by default · chasing llms.txt before the foundation exists.

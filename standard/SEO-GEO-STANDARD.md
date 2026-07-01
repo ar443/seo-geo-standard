@@ -1,10 +1,10 @@
 # SEO + GEO Standard
 
-**Version 1.0.0** · Status: Stable · Last updated: 2026-06-23 · License: MIT
+**Version 1.1.0** · Status: Stable · Last updated: 2026-06-30 · License: MIT
 
 > **What this is:** a complete, framework-agnostic standard for Search Engine Optimization (SEO) and Generative Engine Optimization (GEO). Hand this file to any AI agent (Claude, Cursor, Copilot, ChatGPT) on any project. The agent audits the project against it, reports gaps, implements the fixes, and verifies them.
 >
-> **How it was built:** synthesized from auditing three production codebases and taking the strongest, codebase-verified practice from each. See [`reference/SEO-GEO-REPORT.md`](../reference/SEO-GEO-REPORT.md).
+> **How it was built:** synthesized from auditing three production codebases and taking the strongest, codebase-verified practice from each. v1.1 folds in five additional practices surfaced while auditing a fourth (Next.js) implementation against this standard. See [`reference/SEO-GEO-REPORT.md`](../reference/SEO-GEO-REPORT.md).
 >
 > **Design rule:** every requirement states **WHAT** and a **THRESHOLD**. It does **not** prescribe a framework. The agent figures out *how* for the target stack (Next.js, Laravel+Inertia, Astro, Rails, plain HTML, etc.).
 >
@@ -31,7 +31,7 @@ The golden invariant: **all SEO-critical output (title, meta, canonical, OG/Twit
 
 **1.1 — One source of truth (MUST).** All SEO metadata flows from a single configuration + a single composition layer (a "SEO service") into a single render point. No page emits its own ad-hoc tags or duplicate JSON-LD. (Duplicate schema is a real, observed bug.)
 
-**1.2 — Central config (MUST).** A single config holds site-wide defaults: `site_name`, `site_url`, default `og_image`, default description, `twitter_handle`, `organization_description`, `same_as` (social profile URLs), `sitemap_lastmod`, and the app's schema `application_category`.
+**1.2 — Central config (MUST).** A single config holds site-wide defaults: `site_name`, `site_url`, default `og_image`, default description, `twitter_handle`, `organization_description`, `same_as` (social profile URLs), `sitemap_lastmod`, and the app's schema `application_category`. The `site_url`/origin **MUST be derived from the environment** (an env var with a sensible production fallback), so canonical, OG, and JSON-LD URLs resolve in **every** deploy environment — preview, staging, and production. Never hardcode the production origin; preview deploys then emit dead canonical links and 404'd OG images.
 
 **1.3 — Per-page composition (MUST).** A service/composer produces, per page: `title`, `description`, `canonical`, `og`, `twitter`, `robots` directive, and a `jsonLd` array. Pages call the service; they never hand-build tags.
 
@@ -45,7 +45,7 @@ The golden invariant: **all SEO-critical output (title, meta, canonical, OG/Twit
 |---|---|---|
 | 2.1 | Unique `<title>` | One per page, **30–60 chars**, primary keyword near front, brand suffix |
 | 2.2 | Meta description | Unique, **120–160 chars**, includes intent + a reason to click |
-| 2.3 | Canonical URL | Self-referential absolute URL on every indexable page; one only |
+| 2.3 | Canonical URL | Self-referential absolute URL on every indexable page; one only. Pick **one** path form (trailing-slash policy + lowercase) and make internal links + sitemap match it |
 | 2.4 | Exactly one `<h1>` | Matches the page's primary search intent |
 | 2.5 | Heading hierarchy | Logical `h1→h2→h3`, no skipped levels; H2s phrased as questions where natural |
 | 2.6 | Open Graph | `og:title`, `og:description`, `og:url`, `og:image`, `og:type`, `og:site_name` |
@@ -56,6 +56,7 @@ The golden invariant: **all SEO-critical output (title, meta, canonical, OG/Twit
 | 2.11 | URL structure | Lowercase, hyphenated, stable, keyword-bearing; no tracking params in canonical |
 | 2.12 | `noindex` correctness | App/auth/duplicate pages return `robots: noindex`; public pages never accidentally `noindex` |
 | 2.13 | `<html lang>` + `charset` + responsive `viewport` | Present on every page |
+| 2.14 | Environment-resolvable absolute URLs | `canonical`, `og:image`, and JSON-LD URLs resolve in preview/staging/prod, not just production (see §1.2). Relative paths resolved against the env-derived origin; already-absolute URLs passed through unchanged |
 
 ---
 
@@ -68,6 +69,7 @@ The golden invariant: **all SEO-critical output (title, meta, canonical, OG/Twit
 | Schema type | Apply to |
 |---|---|
 | `Organization` (+ `logo`, `sameAs`) | **Every** public page (global) |
+| `LocalBusiness` / `ProfessionalService` (+ `address`, `areaServed`) | Agencies, local, and service businesses — extend `Organization` with these types globally; add `address`/`geo` on contact/location pages |
 | `WebSite` (+ `SearchAction` if site search exists) | **Every** public page (global) |
 | `SoftwareApplication` / `WebApplication` | Tool/app/home/landing pages (set `applicationCategory`, `offers` if free) |
 | `BreadcrumbList` | Every page below the top level |
@@ -77,6 +79,10 @@ The golden invariant: **all SEO-critical output (title, meta, canonical, OG/Twit
 | `Product` (+ `AggregateRating` if real) | Product/template pages |
 
 **3.3 — Validity (MUST).** Every page's schema passes Google's [Rich Results Test](https://search.google.com/test/rich-results). Never emit ratings/reviews schema for ratings that don't exist.
+
+**3.4 — Node identity & graph linking (SHOULD).** When a page emits multiple related nodes (e.g. `Organization`, `WebSite`, `WebPage`, `BreadcrumbList`), give each a stable `@id` (e.g. `https://site/#organization`) and reference shared entities by `{ "@id": … }` inside a single `@graph` — rather than repeating the full node in every block. This is the concrete technique that satisfies §1.1's "one source per type": linked-by-`@id` nodes cannot drift into duplicate, conflicting copies of the same entity.
+
+**3.5 — Serialization hygiene (MUST).** Strip `undefined`/empty keys before serializing JSON-LD. Never emit `"key": undefined`, empty arrays, or unfilled placeholder values — the output must be valid JSON. A single shared "clean before stringify" step in the composition layer prevents this across all page types.
 
 ---
 
@@ -168,7 +174,7 @@ The agent **MUST** confirm these before claiming completion:
 
 | Page type | MUST have |
 |---|---|
-| **Home / landing** | Title, desc, canonical, OG/Twitter, `Organization` + `WebSite` + `SoftwareApplication`/`WebApplication`, answer-first intro, one H1 |
+| **Home / landing** | Title, desc, canonical, OG/Twitter, `Organization` (+ `LocalBusiness`/`ProfessionalService` for agencies/local businesses) + `WebSite` + `SoftwareApplication`/`WebApplication`, answer-first intro, one H1 |
 | **Tool / app page** | All of home + `WebApplication` with `applicationCategory` + `offers` (free), how-it-works steps |
 | **Guide / how-to** | `HowTo` + `FAQPage` + `BreadcrumbList`, exact step paths, answer-first, "Last updated", ≥3 internal links |
 | **Blog post** | `Article` (`datePublished`/`dateModified`/`author`) + `BreadcrumbList`, H1=query, FAQ block, in sitemap |
@@ -188,6 +194,9 @@ The agent **MUST** confirm these before claiming completion:
 - ❌ Blocking AI crawlers by default, then wondering why you're not cited.
 - ❌ Chasing `llms.txt` / "AI rewrites" before the technical + content foundation exists.
 - ❌ Marketing fluff where a concrete, quotable fact belongs.
+- ❌ Hardcoding the production origin into canonical/OG/JSON-LD URLs, so preview and staging deploys emit dead links and 404'd OG images.
+- ❌ Repeating the same `Organization`/`WebSite` node in every schema block instead of linking it once by `@id` in a single `@graph`.
+- ❌ Serializing JSON-LD with `undefined`/empty/placeholder values left in.
 
 ---
 
